@@ -12,9 +12,7 @@ It combines:
 
 ## Requirements
 
-- Node.js **18+** (recommended: latest LTS)
-
- Download: https://nodejs.org/en
+- Node.js **18+** (https://nodejs.org/en)
 - npm (comes with Node)
 
 ## Install
