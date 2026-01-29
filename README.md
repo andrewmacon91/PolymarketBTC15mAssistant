@@ -107,6 +107,34 @@ WSS RPC (optional but recommended for more real-time fallback):
 - `POLYGON_WSS_URL` (optional)
 - `POLYGON_WSS_URLS` (optional, comma-separated)
 
+### Proxy support
+
+The bot supports HTTP(S) proxies for both HTTP requests (fetch) and WebSocket connections.
+
+Supported env vars (standard):
+
+- `HTTPS_PROXY` / `https_proxy`
+- `HTTP_PROXY` / `http_proxy`
+- `ALL_PROXY` / `all_proxy`
+
+Examples:
+
+PowerShell:
+
+```powershell
+$env:HTTPS_PROXY = "http://127.0.0.1:8080"
+# or
+$env:ALL_PROXY = "socks5://127.0.0.1:1080"
+```
+
+CMD:
+
+```cmd
+set HTTPS_PROXY=http://127.0.0.1:8080
+REM or
+set ALL_PROXY=socks5://127.0.0.1:1080
+```
+
 ## Run
 
 ```bash

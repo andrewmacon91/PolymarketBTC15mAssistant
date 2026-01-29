@@ -1,5 +1,6 @@
 import WebSocket from "ws";
 import { CONFIG } from "../config.js";
+import { wsAgentForUrl } from "../net/proxy.js";
 
 function toNumber(x) {
   const n = Number(x);
@@ -22,7 +23,7 @@ export function startBinanceTradeStream({ symbol = CONFIG.symbol, onUpdate } = {
     if (closed) return;
 
     const url = buildWsUrl(symbol);
-    ws = new WebSocket(url);
+    ws = new WebSocket(url, { agent: wsAgentForUrl(url) });
 
     ws.on("open", () => {
       reconnectMs = 500;

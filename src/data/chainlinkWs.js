@@ -1,6 +1,7 @@
 import WebSocket from "ws";
 import { ethers } from "ethers";
 import { CONFIG } from "../config.js";
+import { wsAgentForUrl } from "../net/proxy.js";
 
 const ANSWER_UPDATED_TOPIC0 = ethers.id("AnswerUpdated(int256,uint256,uint256)");
 
@@ -55,7 +56,7 @@ export function startChainlinkPriceStream({
     const url = wssUrls[urlIndex % wssUrls.length];
     urlIndex += 1;
 
-    ws = new WebSocket(url);
+    ws = new WebSocket(url, { agent: wsAgentForUrl(url) });
 
     const send = (obj) => {
       try {

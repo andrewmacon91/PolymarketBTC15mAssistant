@@ -24,6 +24,7 @@ import { startBinanceTradeStream } from "./data/binanceWs.js";
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
+import { applyGlobalProxyFromEnv } from "./net/proxy.js";
 
 function countVwapCrosses(closes, vwapSeries, lookback) {
   if (closes.length < lookback || vwapSeries.length < lookback) return null;
@@ -36,6 +37,8 @@ function countVwapCrosses(closes, vwapSeries, lookback) {
   }
   return crosses;
 }
+
+applyGlobalProxyFromEnv();
 
 function fmtTimeLeft(mins) {
   const totalSeconds = Math.max(0, Math.floor(mins * 60));

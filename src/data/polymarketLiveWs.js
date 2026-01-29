@@ -1,5 +1,6 @@
 import WebSocket from "ws";
 import { CONFIG } from "../config.js";
+import { wsAgentForUrl } from "../net/proxy.js";
 
 function safeJsonParse(s) {
   try {
@@ -46,7 +47,8 @@ export function startPolymarketChainlinkPriceStream({
     if (closed) return;
 
     ws = new WebSocket(wsUrl, {
-      handshakeTimeout: 10_000
+      handshakeTimeout: 10_000,
+      agent: wsAgentForUrl(wsUrl)
     });
 
     const scheduleReconnect = () => {
