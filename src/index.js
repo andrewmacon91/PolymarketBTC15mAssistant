@@ -25,6 +25,8 @@ import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
 import { applyGlobalProxyFromEnv } from "./net/proxy.js";
+import { DataStore } from "./web/dataStore.js";
+import { startWebServer } from "./web/server.js";
 
 function countVwapCrosses(closes, vwapSeries, lookback) {
   if (closes.length < lookback || vwapSeries.length < lookback) return null;
@@ -400,6 +402,22 @@ async function main() {
   const polymarketLiveStream = startPolymarketChainlinkPriceStream({});
   const chainlinkStream = startChainlinkPriceStream({});
 
+  // Initialize web server
+  let webServer = null;
+  let dataStore = null;
+  if (CONFIG.web.enabled) {
+    try {
+      dataStore = new DataStore(CONFIG.web.bufferSize);
+      webServer = startWebServer({
+        dataStore,
+        port: CONFIG.web.port,
+        host: CONFIG.web.host
+      });
+    } catch (error) {
+      console.error("[Web Server] Failed to start:", error.message);
+    }
+  }
+
   let prevSpotPrice = null;
   let prevCurrentPrice = null;
   let priceToBeatState = { slug: null, value: null, setAtMs: null };
@@ -720,6 +738,76 @@ async function main() {
         edge.edgeDown,
         rec.action === "ENTER" ? `${rec.side}:${rec.phase}:${rec.strength}` : "NO_TRADE"
       ]);
+
+      // Push snapshot to data store and broadcast to WebSocket clients
+      if (dataStore && webServer) {
+        const snapshot = {
+          timestamp: Date.now(),
+          market: {
+            question: poly.ok ? (poly.market?.question ?? "-") : "-",
+            slug: poly.ok ? (poly.market?.slug ?? "-") : "-",
+            timeLeftMin,
+            priceToBeat,
+            currentPrice,
+            spotPrice,
+            liquidity
+          },
+          prices: {
+            binanceSpot: spotPrice,
+            chainlinkCurrent: currentPrice,
+            priceToBeat,
+            vwap: vwapNow
+          },
+          indicators: {
+            rsi: rsiNow,
+            rsiSlope,
+            macd: macd ? {
+              value: macd.value,
+              signal: macd.signal,
+              hist: macd.hist,
+              histDelta: macd.histDelta
+            } : null,
+            vwap: vwapNow,
+            vwapSlope,
+            vwapDist,
+            heikenAshi: {
+              color: consec.color,
+              count: consec.count
+            }
+          },
+          probabilities: {
+            modelUp: timeAware.adjustedUp,
+            modelDown: timeAware.adjustedDown,
+            marketUp,
+            marketDown
+          },
+          edge: {
+            edgeUp: edge.edgeUp,
+            edgeDown: edge.edgeDown
+          },
+          recommendation: {
+            action: rec.action,
+            side: rec.side,
+            phase: rec.phase,
+            strength: rec.strength
+          },
+          regime: regimeInfo.regime,
+          signal,
+          timing: {
+            elapsedMinutes: timing.elapsedMinutes,
+            remainingMinutes: timing.remainingMinutes,
+            timeLeftMin
+          }
+        };
+
+        dataStore.add(snapshot);
+
+        try {
+          webServer.broadcast(snapshot);
+        } catch (broadcastErr) {
+          // Silent fail - don't disrupt main loop
+        }
+      }
     } catch (err) {
       console.log("────────────────────────────");
       console.log(`Error: ${err?.message ?? String(err)}`);

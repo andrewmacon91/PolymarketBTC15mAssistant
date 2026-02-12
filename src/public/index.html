@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PolymarketBTC15m Dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>PolymarketBTC15m Assistant</h1>
+      <div class="connection-status" id="connectionStatus">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Connecting...</span>
+      </div>
+    </header>
+
+    <!-- Current Market Section -->
+    <section class="section">
+      <h2>Current Market</h2>
+      <div class="card">
+        <div class="market-question" id="marketQuestion">Loading...</div>
+        <div class="market-info">
+          <div class="info-item">
+            <span class="label">Market:</span>
+            <span id="marketSlug">-</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Time Left:</span>
+            <span id="timeLeft" class="time-left">-</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Liquidity:</span>
+            <span id="liquidity">-</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prices Grid -->
+    <div class="grid grid-3">
+      <div class="card">
+        <h3>BTC (Binance)</h3>
+        <div class="price-display" id="binancePrice">-</div>
+        <div class="price-change" id="binanceChange"></div>
+      </div>
+      <div class="card">
+        <h3>Current Price</h3>
+        <div class="price-display" id="currentPrice">-</div>
+        <div class="price-change" id="currentPriceVsPTB"></div>
+      </div>
+      <div class="card">
+        <h3>Price to Beat</h3>
+        <div class="price-display" id="priceToBeat">-</div>
+      </div>
+    </div>
+
+    <!-- Recommendation Section -->
+    <section class="section">
+      <h2>Recommendation</h2>
+      <div class="card recommendation-card" id="recommendationCard">
+        <div class="recommendation-action" id="recAction">NO TRADE</div>
+        <div class="recommendation-details">
+          <div class="detail-item">
+            <span class="label">Side:</span>
+            <span id="recSide">-</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Phase:</span>
+            <span id="recPhase">-</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Strength:</span>
+            <span id="recStrength">-</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Indicators Grid -->
+    <div class="grid grid-2">
+      <div class="card">
+        <h3>TA Predict</h3>
+        <div class="indicator-row">
+          <span class="indicator-label up">UP:</span>
+          <span id="modelUp" class="indicator-value">-</span>
+        </div>
+        <div class="indicator-row">
+          <span class="indicator-label down">DOWN:</span>
+          <span id="modelDown" class="indicator-value">-</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Market Prices</h3>
+        <div class="indicator-row">
+          <span class="indicator-label up">UP:</span>
+          <span id="marketUp" class="indicator-value">-</span>
+        </div>
+        <div class="indicator-row">
+          <span class="indicator-label down">DOWN:</span>
+          <span id="marketDown" class="indicator-value">-</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Edge</h3>
+        <div class="indicator-row">
+          <span class="indicator-label">UP:</span>
+          <span id="edgeUp" class="indicator-value">-</span>
+        </div>
+        <div class="indicator-row">
+          <span class="indicator-label">DOWN:</span>
+          <span id="edgeDown" class="indicator-value">-</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Technical Indicators</h3>
+        <div class="indicator-row">
+          <span class="indicator-label">RSI:</span>
+          <span id="rsi" class="indicator-value">-</span>
+        </div>
+        <div class="indicator-row">
+          <span class="indicator-label">MACD:</span>
+          <span id="macd" class="indicator-value">-</span>
+        </div>
+        <div class="indicator-row">
+          <span class="indicator-label">VWAP:</span>
+          <span id="vwap" class="indicator-value">-</span>
+        </div>
+        <div class="indicator-row">
+          <span class="indicator-label">Heiken Ashi:</span>
+          <span id="heikenAshi" class="indicator-value">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-2">
+      <div class="card chart-card">
+        <h3>Price Chart (1 Hour)</h3>
+        <canvas id="priceChart"></canvas>
+      </div>
+      <div class="card chart-card">
+        <h3>RSI (1 Hour)</h3>
+        <canvas id="rsiChart"></canvas>
+      </div>
+      <div class="card chart-card">
+        <h3>Probabilities</h3>
+        <canvas id="probabilityChart"></canvas>
+      </div>
+      <div class="card chart-card">
+        <h3>MACD Histogram</h3>
+        <canvas id="macdChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Signal History -->
+    <section class="section">
+      <h2>Signal History (Last 50)</h2>
+      <div class="card">
+        <div class="table-container">
+          <table id="signalTable">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Signal</th>
+                <th>Model UP</th>
+                <th>Model DOWN</th>
+                <th>Market UP</th>
+                <th>Market DOWN</th>
+                <th>Edge UP</th>
+                <th>Edge DOWN</th>
+                <th>Regime</th>
+              </tr>
+            </thead>
+            <tbody id="signalTableBody">
+              <tr>
+                <td colspan="9" class="text-center">Loading...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Performance Metrics -->
+    <section class="section">
+      <h2>Performance Metrics</h2>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Total Signals</h3>
+          <div class="metric-value" id="totalSignals">-</div>
+        </div>
+        <div class="card">
+          <h3>BUY UP Count</h3>
+          <div class="metric-value up" id="buyUpCount">-</div>
+        </div>
+        <div class="card">
+          <h3>BUY DOWN Count</h3>
+          <div class="metric-value down" id="buyDownCount">-</div>
+        </div>
+        <div class="card">
+          <h3>Avg Edge UP</h3>
+          <div class="metric-value" id="avgEdgeUp">-</div>
+        </div>
+        <div class="card">
+          <h3>Avg Edge DOWN</h3>
+          <div class="metric-value" id="avgEdgeDown">-</div>
+        </div>
+        <div class="card">
+          <h3>Positive Edge Count</h3>
+          <div class="metric-value" id="positiveEdgeCount">-</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>PolymarketBTC15m Assistant Dashboard | Last Updated: <span id="lastUpdated">-</span></p>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/utils.js"></script>
+  <script src="/js/wsClient.js"></script>
+  <script src="/js/charts.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

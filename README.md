@@ -170,11 +170,56 @@ Example:
 - encoded: `p%40ss%3Aword`
 - proxy URL: `http://user:p%40ss%3Aword@1.2.3.4:8080`
 
+## Web Dashboard
+
+**NEW!** The bot now includes a real-time web dashboard for visualizing trading signals and performance metrics.
+
+### Features
+
+- 📊 **Real-time charts** - Price, RSI, MACD, and probability charts
+- 📈 **Live updates** - WebSocket connection with 1-second refresh
+- 📋 **Signal history** - Track last 50 signals with timestamps
+- 📉 **Performance metrics** - Aggregated statistics and edge calculations
+- 🎨 **Dark theme** - Optimized for extended viewing
+- 📱 **Responsive design** - Works on desktop, tablet, and mobile
+
+### Quick Start
+
+When you start the bot, the web dashboard is automatically available:
+
+```bash
+npm start
+```
+
+Then open your browser to: **http://localhost:3000**
+
+### Configuration
+
+Optional web server settings (add to environment variables or `.env` file):
+
+```bash
+WEB_ENABLED=true          # Enable/disable web server (default: true)
+WEB_PORT=3000             # Port for web server (default: 3000)
+WEB_HOST=localhost        # Host to bind to (default: localhost)
+WEB_BUFFER_SIZE=3600      # Data buffer size in seconds (default: 3600 = 1 hour)
+```
+
+### More Information
+
+See [WEB_DASHBOARD.md](./WEB_DASHBOARD.md) for detailed documentation including:
+- API endpoints
+- WebSocket protocol
+- Architecture details
+- Troubleshooting guide
+- Customization options
+
 ## Run
 
 ```bash
 npm start
 ```
+
+**The bot will start in console mode AND launch the web dashboard at http://localhost:3000**
 
 ### Stop
 

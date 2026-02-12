@@ -31,5 +31,12 @@ export const CONFIG = {
     polygonWssUrls: (process.env.POLYGON_WSS_URLS || "").split(",").map((s) => s.trim()).filter(Boolean),
     polygonWssUrl: process.env.POLYGON_WSS_URL || "",
     btcUsdAggregator: process.env.CHAINLINK_BTC_USD_AGGREGATOR || "0xc907E116054Ad103354f2D350FD2514433D57F6f"
+  },
+
+  web: {
+    enabled: process.env.WEB_ENABLED !== "false",
+    port: Number(process.env.WEB_PORT || 3000),
+    host: process.env.WEB_HOST || "localhost",
+    bufferSize: Number(process.env.WEB_BUFFER_SIZE || 3600)
   }
 };
